@@ -4,25 +4,215 @@ format: html
 editor: visual
 ---
 
-## Quarto
+# Introduction
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+Insert small explanation of what the data set is (add hypotheses here or before each analyses?)
 
-## Running Code
+# Data overview
 
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+Libraries and loading data
 
 ```{r}
 library(tidyverse)
+library(plotly)
+library(ggstatsplot)
 
-data <- read.csv("https://zenodo.org/records/10573715/files/CSE_student_performances%20%281%29.csv")
+reports <- read.csv("https://zenodo.org/records/10573715/files/CSE_student_performances%20%281%29.csv")
 ```
 
-You can add options to executable code like this
+## Student Profile
+
+Insert code interpretation here
 
 ```{r}
-#| echo: false
-2 * 2
+
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+## Study Habits
+
+Insert code interpretation here
+
+```{r}
+```
+
+# Analysis 1 - Sleep and Mental Well being
+
+```{r}
+
+
+```
+
+# Analysis 2 - Social Life
+
+Distribution of number of friends \
+*Insert written analysis here later*
+
+```{r}
+#statistical analyses (mean) & plotting of distribution of number of friends
+
+gghistostats(
+  data = reports,
+  x = NumberOfFriend,
+  xlab = "Number of friends",
+  title = "How many friends do students have on average?",
+  subtitle = "Distribution of number of friends",
+  binwidth = 3,
+  results.subtitle = FALSE,               #may change this to add more tests later
+  ggtheme = ggplot2::theme_bw()          #update colors?
+)
+
+
+```
+
+Distribution of whether participants like giving presentations (public speaking)\
+*Insert written analysis here later*
+
+```{r}
+#provisory, will prob update later (improve color)
+
+ggbarstats(
+  data = reports,
+  x = LikePresentation,
+  title = "How students feel about public speaking",
+  subtitle = "Distribution of wheter students like giving public presentation",
+  legend.title = "Students reported liking giving presentation?",
+  results.subtitle = FALSE,
+  ggtheme = ggplot2::theme_bw()
+)
+```
+
+Distribution of whether participants like new things\
+*Insert written analysis here later*
+
+```{r}
+# Also need to be updated later (provisory)
+
+ggbarstats(
+  data = reports,
+  x = LikeNewThings,
+  title = "How students feel about new things",
+  subtitle = "Distribution of wheter students like new things",
+  legend.title = "Students reported liking new things?",
+  results.subtitle = FALSE,
+  ggtheme = ggplot2::theme_bw()
+)
+```
+
+How do these three variables (number of friends, likeness of public presentation, and likeness of new things) relate with one another?
+
+*Insert written interpretation*
+
+```{r}
+#preparing data to be plotted (will update later)
+
+plot_social_life_report <- reports %>%
+  mutate(
+    across(
+      c(LikeNewThings, LikePresentation),
+      ~ case_when(
+        str_to_lower(str_trim(as.character(.x))) %in% c("yes", "1") ~ 1L,
+        str_to_lower(str_trim(as.character(.x))) %in% c("no", "0") ~ 0L,
+        TRUE ~ NA_integer_
+      )
+    )
+  ) %>%
+  drop_na(NumberOfFriend, LikeNewThings, LikePresentation) |>
+  mutate(
+    preference_group = str_c(
+      "New things: ", if_else(LikeNewThings == 1, "Yes", "No"),
+      "\nPresentations: ", if_else(LikePresentation == 1, "Yes", "No")
+    )
+  )
+
+#testing boxplot 1
+
+ggbetweenstats(
+  data = plot_social_life_report,
+  x = preference_group,
+  y = NumberOfFriend,                                 #Provisory??
+  plot.type = "box",
+  results.subtitle = FALSE,
+  pairwise.comparisons = FALSE,
+  centrality.plotting = FALSE,
+  xlab = "Preference combination",
+  ylab = "Number of friends",
+  title = "Number of friends by preferences",
+  ggtheme = ggplot2::theme_bw()
+)
+
+```
+
+```{r}
+#testing 3d interactive plots  ???????????????????????????????????
+
+set.seed(11)
+
+plot_social_life_report %>%
+  plot_ly(
+    x = ~ jitter(LikeNewThings, amount = 0.06),
+    y = ~ jitter(LikePresentation, amount = 0.06),
+    z = ~ NumberOfFriend,
+    color = ~ preference_group,
+    colors = viridisLite::viridis(4),
+    type = "scatter3d",
+    mode = "markers",
+    marker = list(size = 4, opacity = 0.7),
+    text = ~ str_c(
+      preference_group, "\nNumber of friends: ", NumberOfFriend
+    ),
+    hoverinfo = "text"
+  ) %>%
+  layout(
+    title = "Number of friends by preferences",
+    scene = list(
+      xaxis = list(
+        title = "Likes new things",
+        tickvals = c(0, 1),
+        ticktext = c("No", "Yes")
+      ),
+      yaxis = list(
+        title = "Likes presentations",
+        tickvals = c(0, 1),
+        ticktext = c("No", "Yes")
+      ),
+      zaxis = list(title = "Number of friends")
+    )
+  )
+
+
+
+```
+
+Creating a new variable: Extroversion
+
+*Insert reasoning here (cite?)*
+
+```{r}
+#use dplyr to create new variable (extroversion) based on other three
+
+extroversion_reports <- reports %>%
+  mutate(LikeNewThings = case_when(
+    LikePresentation == "Yes" ~ 1L,          #make it so it's not duplicate code
+    LikePresentation == "No"  ~ 0L,
+    TRUE ~ NA_integer_)) %>%
+  mutate(LikePresentation = case_when(
+    LikePresentation == "Yes" ~ 1L,
+    LikePresentation == "No"  ~ 0L,
+    TRUE ~ NA_integer_)) %>%
+  mutate(Extroversion = NumberOfFriend * 0.50 + 
+           LikeNewThings * 0.25 +            #update math/percentages (add wieght?)
+           LikePresentation * 0.25)
+
+#plot new variables distribution
+
+gghistostats(
+  data = extroversion_reports,
+  x = Extroversion,
+  xlab = "Extroversion rates",
+  title = "How extroverted are students on average",
+  subtitle = "Distribution of extroversion across students",
+  binwidth = 2,
+  results.subtitle = FALSE,             
+  ggtheme = ggplot2::theme_bw() 
+)
+```
