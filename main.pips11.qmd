@@ -131,7 +131,7 @@ Insert code interpretation here
 ## Number of friends
 
 ```{r}
-#statistical summary of variable friends data 
+#descriptive statistics summary of variable friends data 
 friend_summary <- reports %>%
   summarise(
     total_students = n(),
@@ -196,16 +196,19 @@ gghistostats(
 
 
 
-#plotting data distribution                   (improve color)
+#plotting data distribution                  
 ggbarstats(
   data = reports,
   x = LikePresentation,
-  title = "How students feel about public speaking",
-  subtitle = "Distribution of wheter students like giving public presentation",
-  legend.title = "Students reported liking giving presentation?",
+  title = "Do students like giving public presentations?",
+  subtitle = "Distribution of student's reported preferences",
+  legend.title = "Likes giving presentations?",
   results.subtitle = FALSE,
   ggtheme = ggplot2::theme_bw()
-)
+) +
+  scale_fill_viridis_d(
+    option = "D"
+  )
 ```
 
 *Insert written analysis here later*
