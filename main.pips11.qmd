@@ -44,12 +44,30 @@ Insert code interpretation here
 
 # Analysis 2 - Social Life
 
-Distribution of number of friends \
+## Distribution of number of friends
+
+\
 *Insert written analysis here later*
 
 ```{r}
-#statistical analyses (mean) & plotting of distribution of number of friends
+#summary of friends data 
 
+friend_summary <- reports %>%
+  summarise(
+    total_students = n(),
+    valid_responses = sum(!is.na(NumberOfFriend)),
+    missing_responses = sum(is.na(NumberOfFriend)),
+    missing_percent = 100 * mean(is.na(NumberOfFriend)),
+    mean_friends = mean(NumberOfFriend, na.rm = TRUE),
+    sd_friends = sd(NumberOfFriend, na.rm = TRUE),
+    median_friends = median(NumberOfFriend, na.rm = TRUE),
+    iqr_friends = IQR(NumberOfFriend, na.rm = TRUE),
+    minimum_friends = min(NumberOfFriend, na.rm = TRUE),
+    maximum_friends = max(NumberOfFriend, na.rm = TRUE)
+  ) %>%
+  print()
+
+#plotting of distribution of number of friends
 gghistostats(
   data = reports,
   x = NumberOfFriend,
@@ -57,8 +75,18 @@ gghistostats(
   title = "How many friends do students have on average?",
   subtitle = "Distribution of number of friends",
   binwidth = 3,
-  results.subtitle = FALSE,               #may change this to add more tests later
-  ggtheme = ggplot2::theme_bw()          #update colors?
+  centrality.type = "mean",
+  centrality.line.args = list(
+    color = "black",
+    linewidth = 0.8,
+    linetype = "dashed"
+  ),
+  bin.args = list(
+    fill = viridisLite::viridis(5)[3],
+    color = "white"
+  ),
+  results.subtitle = FALSE,               
+  ggtheme = ggplot2::theme_bw()        
 )
 
 
@@ -129,7 +157,7 @@ plot_social_life_report <- reports %>%
 ggbetweenstats(
   data = plot_social_life_report,
   x = preference_group,
-  y = NumberOfFriend,                                 #Provisory??
+  y = NumberOfFriend,                                 
   plot.type = "box",
   results.subtitle = FALSE,
   pairwise.comparisons = FALSE,
@@ -202,6 +230,8 @@ extroversion_reports <- reports %>%
   mutate(Extroversion = NumberOfFriend * 0.50 + 
            LikeNewThings * 0.25 +            #update math/percentages (add wieght?)
            LikePresentation * 0.25)
+                                            #make a regression model?
+
 
 #plot new variables distribution
 
