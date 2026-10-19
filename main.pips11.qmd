@@ -16,7 +16,6 @@ Libraries and loading data
 library(tidyverse)
 library(plotly)
 library(ggstatsplot)
-library(viridis)
 
 reports <- read.csv("https://zenodo.org/records/10573715/files/CSE_student_performances%20%281%29.csv")
 ```
@@ -26,92 +25,6 @@ reports <- read.csv("https://zenodo.org/records/10573715/files/CSE_student_perfo
 Insert code interpretation here
 
 ```{r}
-
-# creating variables
-age_data <- reports %>%
-  filter(!is.na(Age), !is.na(Gender))
-
-age_min <- floor(min(age_data$Age))
-age_max <- ceiling(max(age_data$Age))
-bin_size <- 1
-
-# groups shown in the dropdown
-groups <- c("All students", unique(as.character(age_data$Gender)))
-
-# Create one histogram trace per group
-student_demo_plot <- plot_ly()
-
-for (i in seq_along(groups)) {
-  
-  group_name <- groups[i]
-  
-  group_data <- if (group_name == "All students") {
-    age_data
-  } else {
-    filter(age_data, as.character(Gender) == group_name)
-  }
-
-  student_demo_plot <- add_trace(
-    student_demo_plot,
-    data = group_data,
-    x = ~Age,
-    type = "histogram",
-    name = group_name,
-    visible = i == 1,
-    opacity = 0.85,
-    xbins = list(
-      start = age_min,
-      end = age_max + 1,
-      size = bin_size
-    ),
-    marker = list(
-      color = viridis(length(groups), option = "D")[i]
-    ),
-    hovertemplate = paste(
-      "Age: %{x}",
-      "<br>Students: %{y}",
-      "<extra></extra>"
-    )
-  )
-}
-
-# Add dropdown buttons
-visibility <- lapply(seq_along(groups), function(i) {
-  as.list(seq_along(groups) == i)
-})
-
-dropdown_buttons <- lapply(seq_along(groups), function(i) {
-  list(
-    method = "update",
-    args = list(
-      list(visible = visibility[[i]]),
-      list(title = paste("Age Distribution:", groups[i]))
-    ),
-    label = groups[i]
-  )
-})
-
-student_demo_plot <- student_demo_plot %>%
-  layout(
-    title = "Age Distribution: All students",
-    bargap = 0.2,
-    margin = list(t = 100),
-    template = "plotly_white",
-    xaxis = list(title = "Age"),
-    yaxis = list(title = "Number of students"),
-    updatemenus = list(
-      list(
-        type = "dropdown",
-        buttons = dropdown_buttons,
-        x = 1,
-        y = 1.18,
-        xanchor = "right"
-      )
-    ),
-    margin = list(t = 100)
-  )
-
-student_demo_plot
 
 ```
 
@@ -129,16 +42,12 @@ Insert code interpretation here
 
 ```
 
-# Analysis 2 - Social Life
+# Analysis 2 - Student's social life
 
-## Distribution of number of friends
-
-\
-*Insert written analysis here later*
+## Number of friends
 
 ```{r}
-#summary of friends data 
-
+#statistical summary of variable friends data 
 friend_summary <- reports %>%
   summarise(
     total_students = n(),
@@ -151,8 +60,24 @@ friend_summary <- reports %>%
     iqr_friends = IQR(NumberOfFriend, na.rm = TRUE),
     minimum_friends = min(NumberOfFriend, na.rm = TRUE),
     maximum_friends = max(NumberOfFriend, na.rm = TRUE)
+  ) 
+
+#putting the statistics in a readable table
+friend_summary %>%
+  pivot_longer(
+    cols = everything(),
+    names_to = "Statistic",
+    values_to = "Value"
   ) %>%
-  print()
+  mutate(
+    Statistic = gsub("_", " ", Statistic),
+    Value = round(Value, 2)
+  ) %>%
+  knitr::kable(
+    col.names = c("Statistic", "Value"),
+    caption = "Summary of number of friends"
+  )
+
 
 #plotting of distribution of number of friends
 gghistostats(
@@ -179,12 +104,15 @@ gghistostats(
 
 ```
 
-Distribution of whether participants like giving presentations (public speaking)\
-*Insert written analysis here later*
+*Insert sentence interpreting the analysis*
+
+## Liking of presentations (public speaking)
 
 ```{r}
-#provisory, will prob update later (improve color)
 
+
+
+#plotting data distribution                   (improve color)
 ggbarstats(
   data = reports,
   x = LikePresentation,
@@ -195,6 +123,8 @@ ggbarstats(
   ggtheme = ggplot2::theme_bw()
 )
 ```
+
+*Insert written analysis here later*
 
 Distribution of whether participants like new things\
 *Insert written analysis here later*
