@@ -1,10 +1,13 @@
 ---
-title: "main.pips11"
+title: "Psychosocial Dimensions of Student Life"
 format:
   html:
     code-fold: true
     code-summary: "Show R code"
     code-tools: true
+    toc: true
+    toc-depth: 3
+    number-sections: false
 editor: visual
 ---
 
@@ -228,7 +231,14 @@ animated_figure
 
 # Analysis 1 - Sleep and Mental Well being
 
+Sleep is an important part of student life and may be related to both academic performance and mental well-being. In this part of the analysis, we explore students' daily sleep duration and examine whether sleep patterns differ across academic performance and self-reported depression-status groups. We begin by looking at the overall distributions, before exploring differences between the groups.
+
+::: panel-tabset
 ## Distribution of Daily Sleep Hours
+
+### How much do students sleep?
+
+We first examined daily sleep duration among the 99 students. The summary statistics describe typical sleep duration and its variability, while the histogram shows how sleep hours are distributed across the sample.
 
 ```{r}
 #descriptive statistics for sleep duration
@@ -236,14 +246,25 @@ animated_figure
 sleep_summary <- reports %>%
   summarise(
     N = n(),
-    Mean = mean(SleepPerDayHours),
-    Median = median(SleepPerDayHours),
-    SD = sd(SleepPerDayHours),
-    Minimum = min(SleepPerDayHours),
-    Maximum = max(SleepPerDayHours)
+    Mean = mean(SleepPerDayHours, na.rm = TRUE),
+    Median = median(SleepPerDayHours, na.rm = TRUE),
+    SD = sd(SleepPerDayHours, na.rm = TRUE),
+    Minimum = min(SleepPerDayHours, na.rm = TRUE),
+    Maximum = max(SleepPerDayHours, na.rm = TRUE)
+  ) %>%
+  mutate(
+    Mean = round(Mean, 2),
+    Median = round(Median, 2),
+    SD = round(SD, 2)
   )
 
-sleep_summary
+#display formatted summary table
+
+knitr::kable(
+  sleep_summary,
+  caption = "Summary statistics for daily sleep duration (hours)",
+  align = "c"
+)
 
 #distribution of daily sleep hours
 
@@ -261,11 +282,11 @@ ggplot(reports, aes(x = SleepPerDayHours)) +
     linewidth = 1
   ) +
   labs(
-    title = "How many hours do students sleep?",
-    subtitle = "Distribution of daily sleep duration; dashed line indicates the median",
-    x = "Hours of sleep per day",
-    y = "Number of students",
-    caption = "Source: Psychosocial Dimensions of Student Life dataset"
+  title = "Daily sleep duration among students",
+  subtitle = "The dashed line indicates the median",
+  x = "Hours of sleep per day",
+  y = "Number of students",
+  caption = "Source: Psychosocial Dimensions of Student Life dataset"
   ) +
   scale_x_continuous(breaks = 4:12) +
   theme_minimal(base_size = 13) +
@@ -277,11 +298,17 @@ ggplot(reports, aes(x = SleepPerDayHours)) +
 
 ```
 
+### What does the distribution show?
+The histogram shows that reported sleep duration was concentrated between 4 and 8 hours per day, with 8 hours being the most frequently observed value. Relatively few students reported sleeping 10 or 12 hours. Although sleep duration varied across the sample, most students reported sleep durations within this 4–8-hour range.
+
 ## Distribution of self-reported depression status
 
-```{r}
+### How do students report their depression status?
+Before examining whether sleep duration differs across depression-status groups, we first explored how students described their own depression status. The interactive chart below shows the number and percentage of students in each category. Use the buttons to switch between counts and percentages.
 
-# Frequency analysis and visualisation of depression status
+
+```{r}
+#frequency analysis and visualisation of depression status
 
 depression_summary <- reports %>%
   filter(!is.na(DepressionStatus)) %>%
@@ -294,10 +321,8 @@ depression_summary <- reports %>%
     )
   )
 
-
-
-# Interactive depression-status chart
-# Users can switch between counts and percentages
+#interactive depression-status chart
+#users can switch between counts and percentages
 
 depression_plot <- plot_ly(
   data = depression_summary,
@@ -337,7 +362,7 @@ depression_plot <- plot_ly(
   ) %>%
   layout(
     title = list(
-      text = "How do students report their depression status?"
+      text = "Self-reported depression status among students"
     ),
     xaxis = list(
       title = "Number of students",
@@ -383,20 +408,27 @@ depression_plot <- plot_ly(
   )
 
 depression_plot
-
-
 ```
+
+### What does the distribution show?
+
+The most common response was "Sometimes", reported by 44 students (44.4%). A further 34 students (34.3%) selected "Yes", while 21 students (21.2%) selected "No". Thus, most students reported experiencing depression sometimes or answered yes to the depression-status question, while around one-fifth selected no.
+
+These responses describe students' self-reported depression status and should not be interpreted as clinical diagnoses. In the next part of the analysis, we examine whether reported sleep duration differs across these three groups.
+
 
 ## Sleep duration across academic performance groups
 
-### **Question 1: Is daily sleep duration associated with self-reported academic performance among students?**
+### Does sleep duration differ across academic performance groups?
 
-H~0~ - Sleep duration does not differ systematically across the four academic performance groups.
+We next examined whether daily sleep duration varied according to students' self-reported academic performance. The dot plot below shows individual students' reported sleep duration, with a black diamond marking the median for each group. This allows us to compare both the typical sleep duration and the variation within each group.
 
-H~1~ - Sleep duration differs across at least two academic performance groups.
+**Research question:** Is daily sleep duration associated with self-reported academic performance among students?
+
+- **H₀:** Sleep duration does not differ systematically across the four academic performance groups.
+- **H₁:** Sleep duration differs across at least two academic performance groups.
 
 ```{r}
-
 #comparing individual sleep durations across performance groups
 
 sleep_performance <- reports %>%
@@ -494,9 +526,15 @@ plot_ly() %>%
 
 ```
 
-### 
 
-#### Statistical analysis: Sleep and academic performance
+### What patterns can we observe?
+The group medians suggest differences in typical sleep duration across academic performance groups. Students in the *Below average* group reported a median of 5 hours, compared with 7 hours in the *Average* group, 6 hours in the *Good* group, and 8 hours in the *Excellent* group.
+
+However, the group sizes are unequal, particularly for the *Below average* group (n = 4) and the *Excellent* group (n = 9). These descriptive differences therefore need to be considered alongside the statistical tests.
+
+
+### Statistical analysis: Is the overall difference significant?
+Because sleep duration is compared across four independent groups, we used a Kruskal–Wallis test to examine whether sleep duration differed across the academic performance groups.
 
 ```{r}
 #Kruskal-Wallis test to compare sleep duration across performance groups
@@ -508,44 +546,86 @@ sleep_test <- kruskal.test(
 sleep_test
 
 ```
+The Kruskal–Wallis test indicated a statistically significant difference in sleep duration across the four academic performance groups, χ²(3) = 13.30, *p* = .004. We therefore reject the null hypothesis that sleep duration does not differ systematically across the groups.
 
-#interpretation and move onto:
+However, this overall result does not tell us which specific groups differ. We therefore conducted pairwise comparisons to investigate these differences further.
 
-#### Which groups differ?
+
+### Which groups differ?
+We used Dunn's post-hoc tests with a Holm correction to account for multiple comparisons.
 
 ```{r}
 #pairwise comparisons between academic performance groups
-rstatix::dunn_test(
+dunn_results <- rstatix::dunn_test(
   data = sleep_performance,
   SleepPerDayHours ~ AcademicPerformance,
   p.adjust.method = "holm"
+) %>%
+  mutate(
+    statistic = round(statistic, 2),
+    p = format.pval(p, digits = 3, eps = 0.001),
+    p.adj = format.pval(p.adj, digits = 3, eps = 0.001)
+  ) %>%
+  select(
+    group1, group2, n1, n2, statistic, p, p.adj, p.adj.signif
+  )
+
+knitr::kable(
+  dunn_results,
+  col.names = c(
+    "Group 1", "Group 2", "N₁", "N₂",
+    "Test statistic", "Unadjusted p", "Holm-adjusted p", "Significance"
+  ),
+  caption = "Pairwise Dunn tests comparing sleep duration across academic performance groups",
+  align = "llrrrlll"
 )
 ```
 
 Holm-adjusted Dunn tests indicated significant differences in sleep duration between the *Below average* and *Excellent* performance groups (p = .028), and between the *Good* and *Excellent* groups (p = .048). The other pairwise comparisons were not statistically significant after correcting for multiple comparisons. These findings suggest that sleep duration differed between some, but not all, academic performance groups. However, the small sample sizes in the *Below average* (n = 4) and *Excellent* (n = 9) groups warrant caution when interpreting these differences.
 
-#### Effect size
+Thus, the overall difference appears to be driven partly by differences involving the *Excellent* group. However, the small sample sizes in the *Below average* and *Excellent* groups mean these comparisons should be interpreted cautiously.
+
+
+### How large is the observed difference?
+To complement the significance tests, we estimated epsilon-squared (ε²) as an effect-size measure for the Kruskal–Wallis test.
 
 ```{r}
-#calculate effect size for the Kruskal-Wallis test
+#calculate effect size
 H <- as.numeric(sleep_test$statistic)
-k <- 4
+k <- nlevels(droplevels(sleep_performance$AcademicPerformance))
 n <- nrow(sleep_performance)
 
 epsilon_squared <- max(0, (H - k + 1) / (n - k))
 
-epsilon_squared
+knitr::kable(
+  data.frame(
+    Measure = "Epsilon-squared (ε²)",
+    Estimate = round(epsilon_squared, 3)
+  ),
+  caption = "Estimated effect size for the Kruskal–Wallis test",
+  align = "lc"
+)
 ```
 
-The estimated epsilon-squared effect size was (0.108), suggesting some differences in sleep-duration distributions across academic performance groups. This complements the significant Kruskal–Wallis result, although the estimate should be interpreted cautiously given the small and unequal group sizes.
+The estimated epsilon-squared was ε² = 0.108, suggesting a non-negligible difference in sleep-duration distributions across academic performance groups. This estimate should be interpreted cautiously because effect-size conventions vary and the groups are small and unequal.
+
+
+### What do these findings tell us?
+Overall, sleep duration differed across academic performance groups, with the *Excellent* group reporting the highest median sleep duration. The post-hoc comparisons showed significant differences between this group and both the *Below average* and *Good* groups, but not between all groups.
+
+These findings indicate an association between sleep duration and self-reported academic performance in this sample. However, the analysis cannot establish that sleeping longer leads to better academic performance, and the small sizes of some groups limit the certainty of the pairwise findings. We next examine whether sleep duration also differs across students' self-reported depression-status groups.
+
+
 
 ## Sleep duration across self-reported depression-status groups
 
-### **Question 2: Is daily sleep duration associated with self-reported depression status among students?**
+### Does sleep duration differ across depression-status groups?
+After examining academic performance, we turned to students' self-reported depression status. We explored whether daily sleep duration varied between students who answered "No", "Sometimes", or "Yes". The summary statistics and dot plot below allow us to compare typical sleep duration and the variation within each group.
 
-H~0~ - Sleep duration does not differ systematically between the depression-status groups.
+**Research question:** Is daily sleep duration associated with self-reported depression status among students?
 
-H~1~ - Sleep duration differs across at least two depression-status groups.
+- **H₀:** Sleep duration does not differ systematically between the depression-status groups.
+- **H₁:** Sleep duration differs across at least two depression-status groups.
 
 ```{r}
 #prepare data for the sleep and well-being analysis
@@ -563,7 +643,7 @@ sleep_wellbeing <- reports %>%
   filter(!is.na(DepressionStatus))
 
 #summarise sleep duration by depression status
-sleep_wellbeing %>%
+wellbeing_descriptives <- sleep_wellbeing %>%
   group_by(DepressionStatus) %>%
   summarise(
     N = n(),
@@ -572,89 +652,117 @@ sleep_wellbeing %>%
     MeanSleep = mean(SleepPerDayHours),
     SD = sd(SleepPerDayHours),
     .groups = "drop"
+  ) %>%
+  mutate(
+    MeanSleep = round(MeanSleep, 2),
+    SD = round(SD, 2)
   )
 
+knitr::kable(
+  wellbeing_descriptives,
+  col.names = c(
+    "Depression status", "N", "Median (hours)",
+    "IQR", "Mean (hours)", "SD"
+  ),
+  caption = "Summary statistics for sleep duration by depression status",
+  align = "lrrrrr"
+)
+```
+```{r}
+#calculate group medians and sample sizes
 
+wellbeing_summary <- sleep_wellbeing %>%
+  group_by(DepressionStatus) %>%
+  summarise(
+    MedianSleep = median(SleepPerDayHours),
+    N = n(),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    GroupPosition = as.numeric(DepressionStatus)
+  )
 
-# Calculate group medians and sample sizes
-  wellbeing_summary <- sleep_wellbeing %>%
-    group_by(DepressionStatus) %>%
-    summarise(
-      MedianSleep = median(SleepPerDayHours),
-      N = n(),
-      .groups = "drop"
-    ) %>%
-    mutate(GroupPosition = as.numeric(DepressionStatus))
   
-  # Add slight horizontal jitter to separate overlapping points
-  set.seed(123)
+  #add slight horizontal jitter to separate overlapping points
+
+set.seed(123)
+
+sleep_wellbeing <- sleep_wellbeing %>%
+  mutate(
+    GroupPosition = as.numeric(DepressionStatus),
+    JitteredPosition = GroupPosition + runif(n(), -0.12, 0.12)
+  )
   
-  sleep_wellbeing <- sleep_wellbeing %>%
-    mutate(
-      GroupPosition = as.numeric(DepressionStatus),
-      JitteredPosition = GroupPosition + runif(n(), -0.12, 0.12)
-    )
+  #interactive dot plot
   
-  # Interactive dot plot
-  plot_ly() %>%
-    add_trace(
-      data = sleep_wellbeing,
-      x = ~JitteredPosition,
-      y = ~SleepPerDayHours,
-      type = "scatter",
-      mode = "markers",
-      color = ~DepressionStatus,
-      colors = c("#440154", "#21918C", "#FDE725"),
-      marker = list(size = 9, opacity = 0.7),
-      text = ~paste0(
-        "Depression status: ", DepressionStatus,
-        "<br>Sleep duration: ", SleepPerDayHours, " hours"
-      ),
-      hovertemplate = "%{text}<extra></extra>",
-      name = "Individual students"
-    ) %>%
-    add_trace(
-      data = wellbeing_summary,
-      x = ~GroupPosition,
-      y = ~MedianSleep,
-      type = "scatter",
-      mode = "markers",
-      marker = list(
-        symbol = "diamond",
-        size = 15,
-        color = "black",
-        line = list(color = "white", width = 1)
-      ),
-      text = ~paste0(
-        "Depression status: ", DepressionStatus,
-        "<br>Median sleep: ", MedianSleep, " hours",
-        "<br>Number of students: ", N
-      ),
-      hovertemplate = "%{text}<extra></extra>",
-      name = "Group median"
-    ) %>%
-    layout(
-      title = list(
-        text = "Sleep duration across depression-status groups"
-      ),
-      xaxis = list(
-        title = "Self-reported depression status",
-        tickmode = "array",
-        tickvals = 1:3,
-        ticktext = c("No", "Sometimes", "Yes"),
-        range = c(0.5, 3.5)
-      ),
-      yaxis = list(
-        title = "Hours of sleep per day",
-        dtick = 1
-      ),
-      margin = list(b = 90, t = 80),
-      legend = list(orientation = "h", y = -0.2)
-    )
-  
+plot_ly() %>%
+  add_trace(
+    data = sleep_wellbeing,
+    x = ~JitteredPosition,
+    y = ~SleepPerDayHours,
+    type = "scatter",
+    mode = "markers",
+    color = ~DepressionStatus,
+    colors = c("#440154", "#21918C", "#FDE725"),
+    marker = list(size = 9, opacity = 0.7),
+    text = ~paste0(
+      "Depression status: ", DepressionStatus,
+      "<br>Sleep duration: ", SleepPerDayHours, " hours"
+    ),
+    hovertemplate = "%{text}<extra></extra>",
+    name = "Individual students"
+  ) %>%
+  add_trace(
+    data = wellbeing_summary,
+    x = ~GroupPosition,
+    y = ~MedianSleep,
+    type = "scatter",
+    mode = "markers",
+    marker = list(
+      symbol = "diamond",
+      size = 15,
+      color = "black",
+      line = list(color = "white", width = 1)
+    ),
+    text = ~paste0(
+      "Depression status: ", DepressionStatus,
+      "<br>Median sleep: ", MedianSleep, " hours",
+      "<br>Number of students: ", N
+    ),
+    hovertemplate = "%{text}<extra></extra>",
+    name = "Group median"
+  ) %>%
+  layout(
+    title = list(
+      text = "Sleep duration across depression-status groups"
+    ),
+    xaxis = list(
+      title = "Self-reported depression status",
+      tickmode = "array",
+      tickvals = 1:3,
+      ticktext = c("No", "Sometimes", "Yes"),
+      range = c(0.5, 3.5)
+    ),
+    yaxis = list(
+      title = "Hours of sleep per day",
+      dtick = 1
+    ),
+    margin = list(b = 90, t = 80),
+    legend = list(orientation = "h", y = -0.2)
+  )
 ```
 
-#### **Statistical Analysis: Sleep and Well-being**
+
+### What patterns can we observe?
+The dot plot shows individual students' reported sleep duration, with black diamonds indicating the median for each group. Students who answered "No" generally reported more sleep, with a median of 8 hours per day. This decreased to 7 hours among students who answered "Sometimes" and 5 hours among those who answered "Yes".
+
+The individual observations also show variation within each group, with some students reporting considerably more or less sleep than their group's median. Nevertheless, the overall pattern suggests that lower reported sleep duration tended to coincide with reporting depression more frequently.
+
+These are descriptive patterns only; we next use statistical tests to determine whether the observed differences between groups are statistically significant.
+
+
+### Statistical analysis: Is the overall difference significant?
+We used a Kruskal–Wallis test to examine whether sleep duration differed across the three independent depression-status groups.
 
 ```{r}
 #test whether sleep duration differs across depression-status groups
@@ -665,10 +773,13 @@ wellbeing_test <- kruskal.test(
 
 wellbeing_test
 ```
+The Kruskal–Wallis test indicated a statistically significant difference in sleep duration across the depression-status groups, χ²(2) = 23.41, *p* < .001. We therefore reject the null hypothesis that sleep duration does not differ systematically between the groups.
 
-(interpretation)
+However, the overall test does not identify which groups differ from one another. We therefore conducted pairwise comparisons to investigate these differences further.
 
-#### Which groups differ?
+
+### Which groups differ?
+We used Dunn's post-hoc tests with a Holm correction to account for multiple comparisons.
 
 ```{r}
 #pairwise comparisons with Holm correction
@@ -678,14 +789,33 @@ wellbeing_pairwise <- rstatix::dunn_test(
   p.adjust.method = "holm"
 )
 
-wellbeing_pairwise %>%
-  select(group1, group2, n1, n2, statistic, p, p.adj)
+wellbeing_results_table <- wellbeing_pairwise %>%
+  mutate(
+    statistic = round(statistic, 2),
+    p = format.pval(p, digits = 3, eps = 0.001),
+    p.adj = format.pval(p.adj, digits = 3, eps = 0.001)
+  ) %>%
+  select(
+    group1, group2, n1, n2, statistic, p, p.adj
+  )
 
+knitr::kable(
+  wellbeing_results_table,
+  col.names = c(
+    "Group 1", "Group 2", "N₁", "N₂",
+    "Test statistic", "Unadjusted p", "Holm-adjusted p"
+  ),
+  caption = "Pairwise Dunn tests comparing sleep duration across depression-status groups",
+  align = "llrrrll"
+)
 ```
+All three pairwise comparisons were statistically significant after the Holm correction. Sleep duration differed between the "No" and "Sometimes" groups (*p* = .028), the "No" and "Yes" groups (*p* < .001), and the "Sometimes" and "Yes" groups (*p* = .003).
 
-(interpretation)
+Together with the descriptive statistics, these findings suggest that reported sleep duration was lower in groups reporting depression more frequently. The largest difference in median sleep duration was between the "No" group (8 hours) and the "Yes" group (5 hours).
 
-#### Effect size
+
+### How large is the observed difference?
+To complement the significance tests, we estimated epsilon-squared (ε²) as an effect-size measure for the Kruskal–Wallis test.
 
 ```{r}
 #calculate approximate epsilon-squared
@@ -697,13 +827,29 @@ epsilon_squared_wellbeing <- max(
   0, (H - k + 1) / (n - k)
 )
 
-epsilon_squared_wellbeing
+knitr::kable(
+  data.frame(
+    Measure = "Epsilon-squared (ε²)",
+    Estimate = round(epsilon_squared_wellbeing, 3)
+  ),
+  caption = "Estimated effect size for the Kruskal–Wallis test",
+  align = "lc"
+)
 ```
+The estimated epsilon-squared was ε² = 0.223, suggesting a notable difference in sleep-duration distributions across the depression-status groups. This complements the significant overall test, although the estimate should be interpreted as approximate.
 
-(interpretation)
+
+### What do these findings tell us?
+Overall, sleep duration differed across all three self-reported depression-status groups. Students who answered "No" reported the highest median sleep duration, those who answered "Sometimes" reported an intermediate median, and those who answered "Yes" reported the lowest median. The pairwise comparisons supported differences between every pair of groups.
+
+These findings indicate an association between sleep duration and self-reported depression status in this sample. However, the data cannot establish a causal relationship or determine whether sleep duration influences depression status, depression status influences sleep, or other factors contribute to both. Furthermore, self-reported depression status should not be interpreted as a clinical diagnosis.
+
+
+:::
 
 # Analysis 2 - Student's social life
 
+::: panel-tabset
 ## Number of friends
 
 ```{r}
@@ -926,3 +1072,4 @@ gghistostats(
   ggtheme = ggplot2::theme_bw() 
 )
 ```
+:::
