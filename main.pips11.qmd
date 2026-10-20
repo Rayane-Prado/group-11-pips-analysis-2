@@ -152,12 +152,10 @@ reports %>%
 Academic Performance in relation to Taking Notes in Class: Dynamic Plot
 
 ```{r}
-
-
 library(dplyr)
 library(plotly)
 
-# Count students in each combination
+# Counting number of students in each combination
 habit_data <- reports %>%
   filter(
     !is.na(TakingNoteInClass),
@@ -170,7 +168,7 @@ habit_data <- reports %>%
   ) %>%
   ungroup()
 
-# Preserve the original category order
+# Preserve the original category order 
 performance_levels <- unique(reports$AcademicPerformance)
 habit_data$AcademicPerformance <- factor(
   habit_data$AcademicPerformance,
@@ -178,7 +176,7 @@ habit_data$AcademicPerformance <- factor(
 )
 
 # Animate between performance categories
-fig <- plot_ly(
+animated_figure <- plot_ly(
   data = habit_data,
   x = ~TakingNoteInClass,
   y = ~Percentage,
@@ -210,8 +208,7 @@ fig <- plot_ly(
   animation_button() %>%
   animation_slider()
 
-fig
-
+animated_figure
 
 ```
 
