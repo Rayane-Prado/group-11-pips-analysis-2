@@ -24,7 +24,7 @@ reports <- read.csv("https://zenodo.org/records/10573715/files/CSE_student_perfo
 
 ## Student Profile
 
-Insert code interpretation here
+Student Age, visible by Gender
 
 ```{r}
 age_data <- reports %>%
@@ -34,10 +34,10 @@ age_min <- floor(min(age_data$Age))
 age_max <- ceiling(max(age_data$Age))
 bin_size <- 1
 
-# groups shown in the dropdown
+# Assorting groups shown in the dropdown
 groups <- c("All students", unique(as.character(age_data$Gender)))
 
-# Create one histogram trace per group
+# Creating one histogram trace per group
 student_demo_plot <- plot_ly()
 
 for (i in seq_along(groups)) {
@@ -74,7 +74,7 @@ for (i in seq_along(groups)) {
   )
 }
 
-# Add dropdown buttons
+# Adding dropdown menu
 visibility <- lapply(seq_along(groups), function(i) {
   as.list(seq_along(groups) == i)
 })
@@ -90,6 +90,7 @@ dropdown_buttons <- lapply(seq_along(groups), function(i) {
   )
 })
 
+# Setting plot details
 student_demo_plot <- student_demo_plot %>%
   layout(
     title = "Age Distribution: All students",
@@ -113,12 +114,119 @@ student_demo_plot <- student_demo_plot %>%
 student_demo_plot
 ```
 
-## Study Habits
-
-Insert code interpretation here
+Gender Composition
 
 ```{r}
+
+
 ```
+
+Gender and average 
+```{r}
+
+
+```
+
+
+
+## Study Habits
+
+Academic Performance in relation to Taking Notes in Class: Table
+
+```{r}
+library(dplyr)
+
+reports %>%
+  filter(
+    !is.na(AcademicPerformance),
+    !is.na(TakingNoteInClass)
+  ) %>%
+  count(AcademicPerformance, TakingNoteInClass) %>%
+  group_by(AcademicPerformance) %>%
+  mutate(
+    Percentage = round(100 * n / sum(n), 1)
+  ) %>%
+  arrange(AcademicPerformance, TakingNoteInClass)
+
+```
+Academic Performance in relation to Taking Notes in Class: Dynamic Plot
+
+```{r}
+
+
+library(dplyr)
+library(plotly)
+
+# Count students in each combination
+habit_data <- reports %>%
+  filter(
+    !is.na(TakingNoteInClass),
+    !is.na(AcademicPerformance)
+  ) %>%
+  count(AcademicPerformance, TakingNoteInClass, name = "Students") %>%
+  group_by(AcademicPerformance) %>%
+  mutate(
+    Percentage = 100 * Students / sum(Students)
+  ) %>%
+  ungroup()
+
+# Preserve the original category order
+performance_levels <- unique(reports$AcademicPerformance)
+habit_data$AcademicPerformance <- factor(
+  habit_data$AcademicPerformance,
+  levels = performance_levels
+)
+
+# Animate between performance categories
+fig <- plot_ly(
+  data = habit_data,
+  x = ~TakingNoteInClass,
+  y = ~Percentage,
+  frame = ~AcademicPerformance,
+  type = "bar",
+  color = ~TakingNoteInClass,
+  text = ~paste0(round(Percentage, 1), "%"),
+  textposition = "outside",
+  hovertemplate = paste(
+    "Note-taking: %{x}",
+    "<br>Percentage: %{y:.1f}%",
+    "<extra></extra>"
+  )
+) %>%
+  layout(
+    title = "Note-taking Habits Across Academic Performance Groups",
+    xaxis = list(title = "Do you take notes in class?"),
+    yaxis = list(
+      title = "Percentage of Students (%)",
+      range = c(0, 110)
+    ),
+    barmode = "group"
+  ) %>%
+  animation_opts(
+    frame = 1000,
+    transition = 500,
+    redraw = TRUE
+  ) %>%
+  animation_button() %>%
+  animation_slider()
+
+fig
+
+
+```
+
+
+```{r}
+
+
+```
+
+
+```{r}
+
+
+```
+
 
 # Analysis 1 - Sleep and Mental Well being
 
