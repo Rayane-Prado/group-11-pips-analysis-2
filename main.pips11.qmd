@@ -129,7 +129,6 @@ student_demo_plot
 ### Depression Status
 
 ```{r}
-
 depression_column <- "DepressionStatus"
 
 depression_data <- reports %>%
@@ -170,10 +169,6 @@ plot_ly(
 ### Sleep Duration
 
 ```{r}
-library(dplyr)
-library(plotly)
-library(viridis)
-
 sleep_data <- reports %>%
   filter(!is.na(SleepPerDayHours))
 
@@ -205,11 +200,10 @@ plot_ly(
 
 ```
 
+
 ### Number of Friends
 
 ```{r}
-
-
 # Replace NumberOfFriends with your actual column name
 friends_data <- reports %>%
   filter(!is.na(NumberOfFriend)) %>%
@@ -253,12 +247,12 @@ plot_ly(
   )
 ```
 
+
 ## Study Habits
 
 Academic Performance in relation to Taking Notes in Class: Table
 
 ```{r}
-
 reports %>%
   filter(
     !is.na(AcademicPerformance),
@@ -276,8 +270,6 @@ reports %>%
 ### Academic Performance in relation to Taking Notes in Class: Dynamic Plot
 
 ```{r}
-
-
 # Counting number of students in each combination
 habit_data <- reports %>%
   filter(
@@ -338,7 +330,6 @@ animated_figure
 ### Depression Status and Academic Performance
 
 ```{r}
-
 depression_data <- reports %>%
   filter(
     !is.na(DepressionStatus),
@@ -394,10 +385,10 @@ depression_plot
 
 ```
 
-### Challenges in completing Academic Tasks
 
+
+### Challenges in completing Academic Tasks 
 ```{r}
-
 challenge_data <- reports %>%
   filter(!is.na(FaceChallangesToCompleteAcademicTask)) %>%
   count(
@@ -477,9 +468,118 @@ challenge_plot <- plot_ly(
 challenge_plot
 ```
 
-### Other
+
+
+### Challenges in completing Academic tasks and performance
 
 ```{r}
+performance_order <- c(
+  "Below Average",
+  "Average",
+  "Good",
+  "Excellent"
+)
+
+# Check the exact performance labels in your data
+print(table(reports$AcademicPerformance, useNA = "ifany"))
+
+challenge_data <- reports %>%
+  filter(
+    !is.na(FaceChallangesToCompleteAcademicTask),
+    !is.na(AcademicPerformance)
+  ) %>%
+  mutate(
+    AcademicPerformance = trimws(
+      as.character(AcademicPerformance)
+    ),
+    ChallengeResponse = trimws(
+      as.character(FaceChallangesToCompleteAcademicTask)
+    ),
+    # Standardise case while matching the four categories
+    PerformanceMatch = tolower(AcademicPerformance),
+    PerformanceMatch = case_when(
+      PerformanceMatch == "below average" ~ "Below Average",
+      PerformanceMatch == "average" ~ "Average",
+      PerformanceMatch == "good" ~ "Good",
+      PerformanceMatch == "excellent" ~ "Excellent",
+      TRUE ~ NA_character_
+    ),
+    AcademicPerformance = factor(
+      PerformanceMatch,
+      levels = performance_order,
+      ordered = TRUE
+    )
+  ) %>%
+  filter(!is.na(AcademicPerformance)) %>%
+  count(
+    AcademicPerformance,
+    ChallengeResponse,
+    name = "Students"
+  ) %>%
+  complete(
+    AcademicPerformance = factor(
+      performance_order,
+      levels = performance_order,
+      ordered = TRUE
+    ),
+    ChallengeResponse,
+    fill = list(Students = 0)
+  ) %>%
+  group_by(AcademicPerformance) %>%
+  mutate(
+    GroupTotal = sum(Students),
+    Percentage = if_else(
+      GroupTotal > 0,
+      100 * Students / GroupTotal,
+      NA_real_
+    )
+  ) %>%
+  ungroup()
+
+challenge_levels <- unique(challenge_data$ChallengeResponse)
+
+challenge_colors <- setNames(
+  viridis(length(challenge_levels), option = "D"),
+  challenge_levels
+)
+
+plot_ly(
+  data = challenge_data,
+  x = ~AcademicPerformance,
+  y = ~Percentage,
+  color = ~ChallengeResponse,
+  colors = challenge_colors,
+  type = "scatter",
+  mode = "lines+markers",
+  customdata = ~Students,
+  connectgaps = FALSE,
+  hovertemplate = paste0(
+    "Performance: %{x}",
+    "<br>Challenge response: %{fullData.name}",
+    "<br>Percentage: %{y:.1f}%",
+    "<br>Students: %{customdata}",
+    "<extra></extra>"
+  )
+) %>%
+  layout(
+    title = list(
+      text = "Academic Task Challenges Across Performance Levels"
+    ),
+    xaxis = list(
+      title = "Academic Performance",
+      type = "category",
+      categoryorder = "array",
+      categoryarray = performance_order
+    ),
+    yaxis = list(
+      title = "Percentage Within Performance Group",
+      ticksuffix = "%",
+      range = c(0, 100)
+    ),
+    template = "plotly_white",
+    legend = list(title = list(text = "Challenge response")),
+    margin = list(t = 80, b = 80)
+  )
 
 
 ```

@@ -16,7 +16,7 @@ The R variant requires R 4.4 or newer and RStudio is recommended. Install the pa
 > [! check in R which version I need via R.version.string]
 
 ```r
-install.packages(c("plotly"))
+install.packages(c("plotly", "tidyverse", "ggplots2", "viridis", "rstatix"))
 ```
 
 Open **main.pips11.qmd** in Rstudio and and run its chunks from top to bottom.  
