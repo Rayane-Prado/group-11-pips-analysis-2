@@ -20,6 +20,11 @@ Insert small explanation of what the data set is (add hypotheses here or before 
 Libraries and loading data
 
 ```{r}
+#| echo: true
+#| output: false
+#| message: false
+#| warning: false
+
 library(tidyverse)
 library(plotly)
 library(ggstatsplot)
@@ -30,7 +35,6 @@ reports <- read.csv("https://zenodo.org/records/10573715/files/CSE_student_perfo
 ```
 
 ## Student Profile
-
 
 ### Student Age, visible by Gender
 
@@ -122,13 +126,9 @@ student_demo_plot <- student_demo_plot %>%
 student_demo_plot
 ```
 
-
 ### Depression Status
 
 ```{r}
-library(dplyr)
-library(plotly)
-library(viridis)
 
 depression_column <- "DepressionStatus"
 
@@ -166,7 +166,6 @@ plot_ly(
   )
 
 ```
-
 
 ### Sleep Duration
 
@@ -206,12 +205,10 @@ plot_ly(
 
 ```
 
-
 ### Number of Friends
+
 ```{r}
-library(dplyr)
-library(plotly)
-library(viridis)
+
 
 # Replace NumberOfFriends with your actual column name
 friends_data <- reports %>%
@@ -256,13 +253,11 @@ plot_ly(
   )
 ```
 
-
 ## Study Habits
 
 Academic Performance in relation to Taking Notes in Class: Table
 
 ```{r}
-library(dplyr)
 
 reports %>%
   filter(
@@ -278,12 +273,10 @@ reports %>%
 
 ```
 
-
 ### Academic Performance in relation to Taking Notes in Class: Dynamic Plot
 
 ```{r}
-library(dplyr)
-library(plotly)
+
 
 # Counting number of students in each combination
 habit_data <- reports %>%
@@ -342,12 +335,9 @@ animated_figure
 
 ```
 
-
 ### Depression Status and Academic Performance
+
 ```{r}
-library(dplyr)
-library(plotly)
-library(viridis)
 
 depression_data <- reports %>%
   filter(
@@ -404,13 +394,9 @@ depression_plot
 
 ```
 
-
 ### Challenges in completing Academic Tasks
-```{r}
 
-library(dplyr)
-library(plotly)
-library(viridis)
+```{r}
 
 challenge_data <- reports %>%
   filter(!is.na(FaceChallangesToCompleteAcademicTask)) %>%
@@ -491,13 +477,12 @@ challenge_plot <- plot_ly(
 challenge_plot
 ```
 
-
 ### Other
+
 ```{r}
 
 
 ```
-
 
 # Analysis 1 - Sleep and Mental Well being
 
@@ -569,13 +554,14 @@ ggplot(reports, aes(x = SleepPerDayHours)) +
 ```
 
 ### What does the distribution show?
+
 The histogram shows that reported sleep duration was concentrated between 4 and 8 hours per day, with 8 hours being the most frequently observed value. Relatively few students reported sleeping 10 or 12 hours. Although sleep duration varied across the sample, most students reported sleep durations within this 4–8-hour range.
 
 ## Distribution of self-reported depression status
 
 ### How do students report their depression status?
-Before examining whether sleep duration differs across depression-status groups, we first explored how students described their own depression status. The interactive chart below shows the number and percentage of students in each category. Use the buttons to switch between counts and percentages.
 
+Before examining whether sleep duration differs across depression-status groups, we first explored how students described their own depression status. The interactive chart below shows the number and percentage of students in each category. Use the buttons to switch between counts and percentages.
 
 ```{r}
 #frequency analysis and visualisation of depression status
@@ -686,7 +672,6 @@ The most common response was "Sometimes", reported by 44 students (44.4%). A fur
 
 These responses describe students' self-reported depression status and should not be interpreted as clinical diagnoses. In the next part of the analysis, we examine whether reported sleep duration differs across these three groups.
 
-
 ## Sleep duration across academic performance groups
 
 ### Does sleep duration differ across academic performance groups?
@@ -796,14 +781,14 @@ plot_ly() %>%
 
 ```
 
-
 ### What patterns can we observe?
+
 The group medians suggest differences in typical sleep duration across academic performance groups. Students in the *Below average* group reported a median of 5 hours, compared with 7 hours in the *Average* group, 6 hours in the *Good* group, and 8 hours in the *Excellent* group.
 
 However, the group sizes are unequal, particularly for the *Below average* group (n = 4) and the *Excellent* group (n = 9). These descriptive differences therefore need to be considered alongside the statistical tests.
 
-
 ### Statistical analysis: Is the overall difference significant?
+
 Because sleep duration is compared across four independent groups, we used a Kruskal–Wallis test to examine whether sleep duration differed across the academic performance groups.
 
 ```{r}
@@ -816,12 +801,13 @@ sleep_test <- kruskal.test(
 sleep_test
 
 ```
+
 The Kruskal–Wallis test indicated a statistically significant difference in sleep duration across the four academic performance groups, χ²(3) = 13.30, *p* = .004. We therefore reject the null hypothesis that sleep duration does not differ systematically across the groups.
 
 However, this overall result does not tell us which specific groups differ. We therefore conducted pairwise comparisons to investigate these differences further.
 
-
 ### Which groups differ?
+
 We used Dunn's post-hoc tests with a Holm correction to account for multiple comparisons.
 
 ```{r}
@@ -855,8 +841,8 @@ Holm-adjusted Dunn tests indicated significant differences in sleep duration bet
 
 Thus, the overall difference appears to be driven partly by differences involving the *Excellent* group. However, the small sample sizes in the *Below average* and *Excellent* groups mean these comparisons should be interpreted cautiously.
 
-
 ### How large is the observed difference?
+
 To complement the significance tests, we estimated epsilon-squared (ε²) as an effect-size measure for the Kruskal–Wallis test.
 
 ```{r}
@@ -879,17 +865,16 @@ knitr::kable(
 
 The estimated epsilon-squared was ε² = 0.108, suggesting a non-negligible difference in sleep-duration distributions across academic performance groups. This estimate should be interpreted cautiously because effect-size conventions vary and the groups are small and unequal.
 
-
 ### What do these findings tell us?
+
 Overall, sleep duration differed across academic performance groups, with the *Excellent* group reporting the highest median sleep duration. The post-hoc comparisons showed significant differences between this group and both the *Below average* and *Good* groups, but not between all groups.
 
 These findings indicate an association between sleep duration and self-reported academic performance in this sample. However, the analysis cannot establish that sleeping longer leads to better academic performance, and the small sizes of some groups limit the certainty of the pairwise findings. We next examine whether sleep duration also differs across students' self-reported depression-status groups.
 
-
-
 ## Sleep duration across self-reported depression-status groups
 
 ### Does sleep duration differ across depression-status groups?
+
 After examining academic performance, we turned to students' self-reported depression status. We explored whether daily sleep duration varied between students who answered "No", "Sometimes", or "Yes". The summary statistics and dot plot below allow us to compare typical sleep duration and the variation within each group.
 
 **Research question:** Is daily sleep duration associated with self-reported depression status among students?
@@ -938,6 +923,7 @@ knitr::kable(
   align = "lrrrrr"
 )
 ```
+
 ```{r}
 #calculate group medians and sample sizes
 
@@ -1022,16 +1008,16 @@ plot_ly() %>%
   )
 ```
 
-
 ### What patterns can we observe?
+
 The dot plot shows individual students' reported sleep duration, with black diamonds indicating the median for each group. Students who answered "No" generally reported more sleep, with a median of 8 hours per day. This decreased to 7 hours among students who answered "Sometimes" and 5 hours among those who answered "Yes".
 
 The individual observations also show variation within each group, with some students reporting considerably more or less sleep than their group's median. Nevertheless, the overall pattern suggests that lower reported sleep duration tended to coincide with reporting depression more frequently.
 
 These are descriptive patterns only; we next use statistical tests to determine whether the observed differences between groups are statistically significant.
 
-
 ### Statistical analysis: Is the overall difference significant?
+
 We used a Kruskal–Wallis test to examine whether sleep duration differed across the three independent depression-status groups.
 
 ```{r}
@@ -1043,12 +1029,13 @@ wellbeing_test <- kruskal.test(
 
 wellbeing_test
 ```
-The Kruskal–Wallis test indicated a statistically significant difference in sleep duration across the depression-status groups, χ²(2) = 23.41, *p* < .001. We therefore reject the null hypothesis that sleep duration does not differ systematically between the groups.
+
+The Kruskal–Wallis test indicated a statistically significant difference in sleep duration across the depression-status groups, χ²(2) = 23.41, *p* \< .001. We therefore reject the null hypothesis that sleep duration does not differ systematically between the groups.
 
 However, the overall test does not identify which groups differ from one another. We therefore conducted pairwise comparisons to investigate these differences further.
 
-
 ### Which groups differ?
+
 We used Dunn's post-hoc tests with a Holm correction to account for multiple comparisons.
 
 ```{r}
@@ -1079,12 +1066,13 @@ knitr::kable(
   align = "llrrrll"
 )
 ```
-All three pairwise comparisons were statistically significant after the Holm correction. Sleep duration differed between the "No" and "Sometimes" groups (*p* = .028), the "No" and "Yes" groups (*p* < .001), and the "Sometimes" and "Yes" groups (*p* = .003).
+
+All three pairwise comparisons were statistically significant after the Holm correction. Sleep duration differed between the "No" and "Sometimes" groups (*p* = .028), the "No" and "Yes" groups (*p* \< .001), and the "Sometimes" and "Yes" groups (*p* = .003).
 
 Together with the descriptive statistics, these findings suggest that reported sleep duration was lower in groups reporting depression more frequently. The largest difference in median sleep duration was between the "No" group (8 hours) and the "Yes" group (5 hours).
 
-
 ### How large is the observed difference?
+
 To complement the significance tests, we estimated epsilon-squared (ε²) as an effect-size measure for the Kruskal–Wallis test.
 
 ```{r}
@@ -1106,21 +1094,26 @@ knitr::kable(
   align = "lc"
 )
 ```
+
 The estimated epsilon-squared was ε² = 0.223, suggesting a notable difference in sleep-duration distributions across the depression-status groups. This complements the significant overall test, although the estimate should be interpreted as approximate.
 
-
 ### What do these findings tell us?
+
 Overall, sleep duration differed across all three self-reported depression-status groups. Students who answered "No" reported the highest median sleep duration, those who answered "Sometimes" reported an intermediate median, and those who answered "Yes" reported the lowest median. The pairwise comparisons supported differences between every pair of groups.
 
 These findings indicate an association between sleep duration and self-reported depression status in this sample. However, the data cannot establish a causal relationship or determine whether sleep duration influences depression status, depression status influences sleep, or other factors contribute to both. Furthermore, self-reported depression status should not be interpreted as a clinical diagnosis.
-
-
 :::
 
 # Analysis 2 - Student's social life
 
+Another crucial part of student's life is their social relations and skills. Whether they have social connections they can rely on and how they see/deal with the social world directly affects not only their academic performance but life as whole. In this part we analyse the distribution of data in the relevant variables, how they relate to one another, and finally, we create a new variable related to social life based on the other relevant variables.
+
 ::: panel-tabset
 ## Number of friends
+
+### **How many friends do students have?**
+
+We first analyzed the distribution of number of friends among the 99 students from our sample. The summary statistics describe average number of friends, outliers information (minimum and maximum values), as well as the reporting rates of the variable (valid responses vs. missing values).
 
 ```{r}
 #descriptive statistics summary of variable friends data 
@@ -1151,9 +1144,8 @@ friend_summary %>%
   ) %>%
   knitr::kable(
     col.names = c("Statistic", "Value"),
-    caption = "Summary of number of friends"
+    caption = "Summary of statistics for number of friends"
   )
-
 
 #plotting of distribution of number of friends
 gghistostats(
@@ -1176,17 +1168,22 @@ gghistostats(
   results.subtitle = FALSE,               
   ggtheme = ggplot2::theme_bw()        
 )
-
-
 ```
 
-*Insert sentence interpreting the analysis*
+### **What does the distribution show?**
 
-## Liking of presentations (public speaking)
+The histogram ...
+
+## Liking presentations (public speaking)
+
+### **Do students like giving presentations (public speaking)?**
+
+We also analysed student's preferences in their reporting of whether they like giving presentations, which we argue is also closely related to social skills considering the connection between public speaking and sociability.
+
+Insert summary table and interpretation of it above
 
 ```{r}
-
-
+#| warning: false
 
 #plotting data distribution                  
 ggbarstats(
@@ -1203,14 +1200,22 @@ ggbarstats(
   )
 ```
 
-*Insert written analysis here later*
+### What does the distribution show?
 
-Distribution of whether participants like new things\
-*Insert written analysis here later*
+The histogram...
+
+## Liking new things 
+
+### **Do students like new things?**
+
+Lastly, before moving on to seeing how the social variables relate to one another we also analysed the patterns in student responses on whether they like new things. Similarly to liking to give presentations, we consider liking new things to be a social skill because of its close connection to sociability. Specifically, we believe it directly relates to openness to experience, a directly relevant personality trait that relates to higher levels of empathy and connection
+
+Insert summary table + interpretation of it above
 
 ```{r}
-# Also need to be updated later (provisory)
+#| warning: false
 
+#plotting data distribution 
 ggbarstats(
   data = reports,
   x = LikeNewThings,
@@ -1219,15 +1224,24 @@ ggbarstats(
   legend.title = "Students reported liking new things?",
   results.subtitle = FALSE,
   ggtheme = ggplot2::theme_bw()
-)
+) +
+  scale_fill_viridis_d(
+    option = "D"
+  )
 ```
 
-How do these three variables (number of friends, likeness of public presentation, and likeness of new things) relate with one another?
+### What does this distribution show?
 
-*Insert written interpretation*
+The histogram....
+
+## Relationship between social variables
+
+**How do these three variables (number of friends, likeness of public presentation, and likeness of new things) relate with one another?**
+
+Insert reasoning
 
 ```{r}
-#preparing data to be plotted (will update later)
+#preparing data to be plotted 
 
 plot_social_life_report <- reports %>%
   mutate(
@@ -1248,7 +1262,7 @@ plot_social_life_report <- reports %>%
     )
   )
 
-#testing boxplot 1
+#boxplot 
 
 ggbetweenstats(
   data = plot_social_life_report,
@@ -1262,12 +1276,15 @@ ggbetweenstats(
   ylab = "Number of friends",
   title = "Number of friends by preferences",
   ggtheme = ggplot2::theme_bw()
-)
+)  +
+  scale_color_viridis_d(
+    option = "D"
+  ) 
 
 ```
 
 ```{r}
-#testing 3d interactive plots  ???????????????????????????????????
+#testing 3d interactive plots  
 
 set.seed(11)
 
@@ -1307,9 +1324,13 @@ plot_social_life_report %>%
 
 ```
 
-Creating a new variable: Extroversion
+Summary of relationship
 
-*Insert reasoning here (cite?)*
+## Creating a new variable: Extroversion
+
+### **Creating a new variable: Extroversion**
+
+Insert reasoning
 
 ```{r}
 #use dplyr to create new variable (extroversion) based on other three
@@ -1342,4 +1363,6 @@ gghistostats(
   ggtheme = ggplot2::theme_bw() 
 )
 ```
+
+What does this mean?
 :::
