@@ -17,8 +17,6 @@ Insert small explanation of what the data set is (add hypotheses here or before 
 
 # Data overview
 
-
-
 ```{r}
 #| echo: true
 #| output: false
@@ -42,8 +40,10 @@ library(rstatix)
 ```
 
 ## Student Profile
-
+::: panel-tabset
 ### Student Age, visible by Gender
+The following plot demonstrates the student ages within the sample.
+The dropdown menu can be utilized to show the age distribution according to Gender (Male/Female).
 
 ```{r}
 age_data <- reports %>%
@@ -134,7 +134,7 @@ student_demo_plot
 ```
 
 ### Depression Status
-
+The following plot visualizes the Depression status (yes = depression present, sometimes = occasional depressive mood, no = no depression present) within the student sample.
 ```{r}
 depression_column <- "DepressionStatus"
 
@@ -174,6 +174,7 @@ plot_ly(
 ```
 
 ### Sleep Duration
+The following plot demonstrates the students' sleep duration (in hours).
 
 ```{r}
 sleep_data <- reports %>%
@@ -206,56 +207,14 @@ plot_ly(
   )
 
 ```
-
-### Number of Friends
-
-```{r}
-# Replace NumberOfFriends with your actual column name
-friends_data <- reports %>%
-  filter(!is.na(NumberOfFriend)) %>%
-  count(Response = NumberOfFriend, name = "Students") %>%
-  mutate(
-    Percentage = 100 * Students / sum(Students)
-  ) %>%
-  arrange(Students)
-
-plot_ly(
-  data = friends_data,
-  x = ~Students,
-  y = ~reorder(as.character(Response), Students),
-  type = "bar",
-  orientation = "h",
-  marker = list(
-    color = viridis(nrow(friends_data), option = "D"),
-    line = list(color = "white", width = 1)
-  ),
-  text = ~paste0(round(Percentage, 1), "%"),
-  textposition = "outside",
-  hovertemplate = paste(
-    "Number of friends: %{y}",
-    "<br>Students: %{x}",
-    "<br>Percentage: %{text}",
-    "<extra></extra>"
-  )
-) %>%
-  layout(
-    title = "Number of Friends Among Students",
-    xaxis = list(
-      title = "Number of Students",
-      rangemode = "tozero"
-    ),
-    yaxis = list(
-      title = "Number of Friends",
-      automargin = TRUE
-    ),
-    template = "plotly_white",
-    margin = list(l = 100, r = 60, t = 70, b = 60)
-  )
-```
+:::
 
 ## Study Habits
-
-Academic Performance in relation to Taking Notes in Class: Table
+:::panel-tabset
+### Academic Performance in relation to Taking Notes in Class
+#### Table
+Academic performance can be sorted by "Below average", "Average", "Good", "Excellent", and
+Taking Notes is quantified in "Yes", "No", and "Maybe" answer
 
 ```{r}
 reports %>%
@@ -272,7 +231,8 @@ reports %>%
 
 ```
 
-### Academic Performance in relation to Taking Notes in Class: Dynamic Plot
+#### Dynamic Plot
+A visualization of the above Table. The animation can be started by pressing the "Play" button on the left. Alternatively, it is possible to look at all groups manually.
 
 ```{r}
 library(dplyr)
@@ -476,6 +436,7 @@ challenge_plot
 ```
 
 ### Challenges in completing Academic tasks and performance
+The above demonstarted academic task challenges plotted in relation to academic performance.
 
 ```{r}
 performance_order <- c(
@@ -588,7 +549,7 @@ plot_ly(
 
 
 ```
-
+:::
 # Analysis 1 - Sleep and Mental Well being
 
 Sleep is an important part of student life and may be related to both academic performance and mental well-being. In this part of the analysis, we explore students' daily sleep duration and examine whether sleep patterns differ across academic performance and self-reported depression-status groups. We begin by looking at the overall distributions, before exploring differences between the groups.
