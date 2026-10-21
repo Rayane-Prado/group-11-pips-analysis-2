@@ -200,7 +200,6 @@ plot_ly(
 
 ```
 
-
 ### Number of Friends
 
 ```{r}
@@ -246,7 +245,6 @@ plot_ly(
     margin = list(l = 100, r = 60, t = 70, b = 60)
   )
 ```
-
 
 ## Study Habits
 
@@ -385,9 +383,8 @@ depression_plot
 
 ```
 
+### Challenges in completing Academic Tasks
 
-
-### Challenges in completing Academic Tasks 
 ```{r}
 challenge_data <- reports %>%
   filter(!is.na(FaceChallangesToCompleteAcademicTask)) %>%
@@ -467,8 +464,6 @@ challenge_plot <- plot_ly(
 
 challenge_plot
 ```
-
-
 
 ### Challenges in completing Academic tasks and performance
 
@@ -1304,7 +1299,7 @@ ggbarstats(
 
 The histogram...
 
-## Liking new things 
+## Liking new things
 
 ### **Do students like new things?**
 
@@ -1465,4 +1460,6 @@ gghistostats(
 ```
 
 What does this mean?
+
+Testttttttttttttttttt
 :::
