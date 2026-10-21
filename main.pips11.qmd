@@ -31,7 +31,8 @@ reports <- read.csv("https://zenodo.org/records/10573715/files/CSE_student_perfo
 
 ## Student Profile
 
-Student Age, visible by Gender
+
+### Student Age, visible by Gender
 
 ```{r}
 age_data <- reports %>%
@@ -121,7 +122,8 @@ student_demo_plot <- student_demo_plot %>%
 student_demo_plot
 ```
 
-Depression Status
+
+### Depression Status
 
 ```{r}
 library(dplyr)
@@ -165,7 +167,8 @@ plot_ly(
 
 ```
 
-Sleep Duration
+
+### Sleep Duration
 
 ```{r}
 library(dplyr)
@@ -203,7 +206,8 @@ plot_ly(
 
 ```
 
-Number of Friends
+
+### Number of Friends
 ```{r}
 library(dplyr)
 library(plotly)
@@ -251,6 +255,8 @@ plot_ly(
     margin = list(l = 100, r = 60, t = 70, b = 60)
   )
 ```
+
+
 ## Study Habits
 
 Academic Performance in relation to Taking Notes in Class: Table
@@ -272,7 +278,8 @@ reports %>%
 
 ```
 
-Academic Performance in relation to Taking Notes in Class: Dynamic Plot
+
+### Academic Performance in relation to Taking Notes in Class: Dynamic Plot
 
 ```{r}
 library(dplyr)
@@ -335,7 +342,8 @@ animated_figure
 
 ```
 
-Depression Status and Academic Performance
+
+### Depression Status and Academic Performance
 ```{r}
 library(dplyr)
 library(plotly)
@@ -396,7 +404,8 @@ depression_plot
 
 ```
 
-Challenges in completing Academic Tasks
+
+### Challenges in completing Academic Tasks
 ```{r}
 
 library(dplyr)
@@ -483,13 +492,12 @@ challenge_plot
 ```
 
 
-```
-
-Other
+### Other
 ```{r}
 
 
 ```
+
 
 # Analysis 1 - Sleep and Mental Well being
 
