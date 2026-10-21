@@ -17,21 +17,28 @@ Insert small explanation of what the data set is (add hypotheses here or before 
 
 # Data overview
 
-Libraries and loading data
+
 
 ```{r}
 #| echo: true
 #| output: false
 #| message: false
 #| warning: false
+```
 
+## Loading data
+```{r}
+reports <- read.csv("https://zenodo.org/records/10573715/files/CSE_student_performances%20%281%29.csv")
+```
+
+## Libraries
+Has to be ran prior to running the code chunks.
+```{r}
 library(tidyverse)
 library(plotly)
 library(ggstatsplot)
 library(viridis)
 library(rstatix)
-
-reports <- read.csv("https://zenodo.org/records/10573715/files/CSE_student_performances%20%281%29.csv")
 ```
 
 ## Student Profile
@@ -268,13 +275,9 @@ reports %>%
 ### Academic Performance in relation to Taking Notes in Class: Dynamic Plot
 
 ```{r}
-<<<<<<< HEAD
-=======
-
 library(dplyr)
 library(plotly)
 
->>>>>>> 6566c34 (Editing Loading data & Library sections)
 # Counting number of students in each combination
 habit_data <- reports %>%
   filter(
