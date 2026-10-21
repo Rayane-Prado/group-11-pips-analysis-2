@@ -121,20 +121,136 @@ student_demo_plot <- student_demo_plot %>%
 student_demo_plot
 ```
 
-Gender Composition
+Depression Status
 
 ```{r}
+library(dplyr)
+library(plotly)
+library(viridis)
 
+depression_column <- "DepressionStatus"
+
+depression_data <- reports %>%
+  filter(!is.na(.data[[depression_column]])) %>%
+  count(Response = .data[[depression_column]],
+        name = "Students") %>%
+  mutate(
+    Percentage = 100 * Students / sum(Students)
+  )
+
+plot_ly(
+  data = depression_data,
+  x = ~Response,
+  y = ~Students,
+  type = "bar",
+  marker = list(
+    color = viridis(nrow(depression_data), option = "D"),
+    line = list(color = "white", width = 1)
+  ),
+  customdata = ~Percentage,
+  hovertemplate = paste(
+    "Response: %{x}",
+    "<br>Students: %{y}",
+    "<br>Percentage: %{customdata:.1f}%",
+    "<extra></extra>"
+  )
+) %>%
+  layout(
+    title = "Student Depression Status",
+    xaxis = list(title = "Reported Status"),
+    yaxis = list(title = "Number of Students"),
+    template = "plotly_white",
+    margin = list(t = 70, b = 90)
+  )
 
 ```
 
-Gender and average
+Sleep Duration
 
 ```{r}
+library(dplyr)
+library(plotly)
+library(viridis)
 
+sleep_data <- reports %>%
+  filter(!is.na(SleepPerDayHours))
+
+plot_ly(
+  data = sleep_data,
+  x = ~SleepPerDayHours,
+  type = "histogram",
+  xbins = list(size = 1),
+  marker = list(
+    color = viridis(5, option = "D")[3],
+    line = list(color = "white", width = 1)
+  ),
+  hovertemplate = paste(
+    "Sleep duration: %{x} hours",
+    "<br>Number of students: %{y}",
+    "<extra></extra>"
+  )
+) %>%
+  layout(
+    title = "How Many Hours Do Students Sleep?",
+    xaxis = list(
+      title = "Hours of Sleep per Day",
+      dtick = 1
+    ),
+    yaxis = list(title = "Number of Students"),
+    template = "plotly_white",
+    margin = list(t = 70, b = 60)
+  )
 
 ```
 
+Number of Friends
+```{r}
+library(dplyr)
+library(plotly)
+library(viridis)
+
+# Replace NumberOfFriends with your actual column name
+friends_data <- reports %>%
+  filter(!is.na(NumberOfFriend)) %>%
+  count(Response = NumberOfFriend, name = "Students") %>%
+  mutate(
+    Percentage = 100 * Students / sum(Students)
+  ) %>%
+  arrange(Students)
+
+plot_ly(
+  data = friends_data,
+  x = ~Students,
+  y = ~reorder(as.character(Response), Students),
+  type = "bar",
+  orientation = "h",
+  marker = list(
+    color = viridis(nrow(friends_data), option = "D"),
+    line = list(color = "white", width = 1)
+  ),
+  text = ~paste0(round(Percentage, 1), "%"),
+  textposition = "outside",
+  hovertemplate = paste(
+    "Number of friends: %{y}",
+    "<br>Students: %{x}",
+    "<br>Percentage: %{text}",
+    "<extra></extra>"
+  )
+) %>%
+  layout(
+    title = "Number of Friends Among Students",
+    xaxis = list(
+      title = "Number of Students",
+      rangemode = "tozero"
+    ),
+    yaxis = list(
+      title = "Number of Friends",
+      automargin = TRUE
+    ),
+    template = "plotly_white",
+    margin = list(l = 100, r = 60, t = 70, b = 60)
+  )
+```
 ## Study Habits
 
 Academic Performance in relation to Taking Notes in Class: Table
@@ -219,11 +335,157 @@ animated_figure
 
 ```
 
+Depression Status and Academic Performance
 ```{r}
+library(dplyr)
+library(plotly)
+library(viridis)
+
+depression_data <- reports %>%
+  filter(
+    !is.na(DepressionStatus),
+    !is.na(AcademicPerformance)
+  ) %>%
+  count(
+    DepressionStatus,
+    AcademicPerformance,
+    name = "Students"
+  ) %>%
+  group_by(DepressionStatus) %>%
+  mutate(
+    Percentage = 100 * Students / sum(Students)
+  ) %>%
+  ungroup()
+
+performance_categories <- unique(
+  depression_data$AcademicPerformance
+)
+
+depression_plot <- plot_ly(
+  data = depression_data,
+  x = ~DepressionStatus,
+  y = ~Percentage,
+  color = ~AcademicPerformance,
+  colors = viridis(
+    length(performance_categories),
+    option = "D"
+  ),
+  type = "bar",
+  customdata = ~Students,
+  hovertemplate = paste(
+    "Depression status: %{x}",
+    "<br>Performance: %{fullData.name}",
+    "<br>Students: %{customdata}",
+    "<br>Percentage: %{y:.1f}%",
+    "<extra></extra>"
+  )
+) %>%
+  layout(
+    title = "Academic Performance by Depression Status",
+    xaxis = list(title = "Depression status"),
+    yaxis = list(
+      title = "Percentage of students",
+      range = c(0, 100)
+    ),
+    barmode = "stack",
+    legend = list(title = list(text = "Academic performance")),
+    template = "plotly_white"
+  )
+
+depression_plot
+
+```
+
+Challenges in completing Academic Tasks
+```{r}
+
+library(dplyr)
+library(plotly)
+library(viridis)
+
+challenge_data <- reports %>%
+  filter(!is.na(FaceChallangesToCompleteAcademicTask)) %>%
+  count(
+    FaceChallangesToCompleteAcademicTask,
+    name = "Students"
+  ) %>%
+  mutate(
+    Percentage = 100 * Students / sum(Students),
+    Response = as.character(
+      FaceChallangesToCompleteAcademicTask
+    )
+  )
+
+challenge_plot <- plot_ly(
+  data = challenge_data,
+  x = ~Response
+) %>%
+  add_bars(
+    y = ~Students,
+    name = "Number of students",
+    marker = list(color = viridis(2, option = "D")[1]),
+    visible = TRUE,
+    hovertemplate = paste(
+      "Response: %{x}",
+      "<br>Students: %{y}",
+      "<extra></extra>"
+    )
+  ) %>%
+  add_bars(
+    y = ~Percentage,
+    name = "Percentage",
+    marker = list(color = viridis(2, option = "D")[2]),
+    visible = FALSE,
+    hovertemplate = paste(
+      "Response: %{x}",
+      "<br>Percentage: %{y:.1f}%",
+      "<extra></extra>"
+    )
+  ) %>%
+  layout(
+    title = "Challenges Completing Academic Tasks",
+    xaxis = list(title = "Response"),
+    yaxis = list(title = "Number of students"),
+    template = "plotly_white",
+    updatemenus = list(
+      list(
+        type = "buttons",
+        direction = "right",
+        x = 0,
+        y = 1.18,
+        buttons = list(
+          list(
+            label = "Counts",
+            method = "update",
+            args = list(
+              list(visible = list(TRUE, FALSE)),
+              list(yaxis = list(title = "Number of students"))
+            )
+          ),
+          list(
+            label = "Percentages",
+            method = "update",
+            args = list(
+              list(visible = list(FALSE, TRUE)),
+              list(yaxis = list(
+                title = "Percentage (%)",
+                range = list(0, 100)
+              ))
+            )
+          )
+        )
+      )
+    ),
+    margin = list(t = 100)
+  )
+
+challenge_plot
+```
 
 
 ```
 
+Other
 ```{r}
 
 
