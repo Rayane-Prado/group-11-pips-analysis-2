@@ -1274,7 +1274,7 @@ The histogram...
 
 ### **Do students like new things?**
 
-Lastly, before moving on to seeing how the social variables relate to one another we also analysed the patterns in student responses on whether they like new things. Similarly to liking to give presentations, we consider liking new things to be a social skill because of its close connection to sociability. Specifically, we believe it directly relates to openness to experience, a directly relevant personality trait that relates to higher levels of empathy and connection
+Lastly, before moving on to seeing how the social variables relate to one another we also analysed the patterns in student responses on whether they like new things. Similarly to liking to give presentations, we consider liking new things to be a social skill because of its close connection to sociability. Specifically, we believe it directly relates to openness to experience, a directly relevant personality trait that relates to higher levels of empathy and connection, which are also social skills
 
 Insert summary table + interpretation of it above
 
@@ -1307,6 +1307,8 @@ The histogram....
 Insert reasoning
 
 ```{r}
+#| warning: false
+
 #preparing data to be plotted 
 
 plot_social_life_report <- reports %>%
@@ -1386,8 +1388,6 @@ plot_social_life_report %>%
     )
   )
 
-
-
 ```
 
 Summary of relationship
@@ -1430,7 +1430,7 @@ gghistostats(
 )
 ```
 
-What does this mean?
+### What does this mean?
 
-Testttttttttttttttttt
+T
 :::
