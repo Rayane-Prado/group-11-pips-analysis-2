@@ -1318,7 +1318,7 @@ plotly::ggplotly(
 
 ### What does the distribution show?
 
-Among the 99 students examined, 69 (approximately 70%) reported liking giving presentations and 30 (approximately 30%) did not. Thus, liking presentations was more common in this sample.
+Among the 99 students examined, 69 (approximately 70%) reported liking giving presentations and 30 (approximately 30%) did not. Thus, liking presentations was more common than not liking presentations in this sample.
 
 ## Liking new things
 
@@ -1387,13 +1387,17 @@ plotly::ggplotly(
 
 ### What does this distribution show?
 
-Among the 99 students, 89 (approximately 90%) reported liking new things and 10 (approximately 10%) did not. Similarly to liking to give presentations, liking new things was also common in this sample.
+Among the 99 students, 89 (approximately 90%) reported liking new things and 10 (approximately 10%) did not. Similarly to liking to give presentations, liking new things was also more common than not liking new things in this sample.
 
 ## Relationship between social variables
 
 ### **RQ: How do reported friendship counts differ across combinations of preferences for presentations and new things?**
 
 We explored whether students’ preferences for giving presentations and new things were associated with their reported number of friends. These preferences may relate to participation in activities that offer opportunities for social contact. Comparing friendship counts across the four preference combinations allows us to examine whether students with different combinations report different social network sizes.
+
+- **H₀:** Students who like to give presentations and new things will NOT have more friends than other students. 
+
+- **H₁:** Students who like both giving presentations and new things will have more friends than those who do not.
 
 ```{r}
 #| warning: false
@@ -1530,7 +1534,7 @@ kruskal_results %>%
   )
 ```
 
-Friendship counts showed no consistent increase across preference combinations (new things / presentations). Students who liked both had the widest spread, with several counts reaching 100, although their median was only 4. The median was higher among students who liked new things but disliked presentations (8.5), while students who disliked both had the lowest median (2). All four students who disliked new things but liked presentations reported 9 friends, so their box collapsed to a horizontal line. Despite these descriptive differences, the Kruskal–Wallis test did not provide clear evidence of differences in friendship-count distributions across groups, H(3)=4.26, p=.234. Interpretation should be cautious because group sizes were small and unequal.
+Friendship counts showed no consistent increase across preference combinations (new things / presentations). Students who liked both had the widest spread, with several counts reaching 100, although their median was only 4. The median was higher among students who liked new things but disliked presentations (8.5), while students who disliked both had the lowest median (2). All four students who disliked new things but liked presentations reported 9 friends, so their box collapsed to a horizontal line. Despite these descriptive differences, the Kruskal–Wallis test did not provide clear evidence of differences in friendship-count distributions across groups, H(3)=4.26, p=.234. Therefore, although the graph may indicate some group differences, the statistical test provides evidence for the null hypothesis. Interpretation should be cautious because group sizes were small and unequal.
 
 ## Social variables and Academic performance
 
@@ -1538,7 +1542,7 @@ Friendship counts showed no consistent increase across preference combinations (
 
 This research question explores whether students’ social connections and preferences for presenting and trying new things are related to how they rate their academic performance
 
-- **H₀:** Friendship counts and preferences for presentations and new things are not associated with self-reported academic performance.f friends
+- **H₀:** Friendship counts and preferences for presentations and new things are not associated with self-reported academic performance.
 
 - **H₁:** Students with more friends and who like presentations and new things will tend to report higher academic performance.
 
@@ -1704,7 +1708,7 @@ presentation_academic %>%
 
 The stacked bar chart shows that students who liked giving presentations generally reported higher academic performance. Around 55% of this group reported Good or Excellent performance, compared with 40% of those who did not like presentations. Below Average performance occurred only among students who disliked presentations (13.3%), while Excellent performance occurred only among those who liked them (approximately 13%).
 
-Among the 99 students analysed, Fisher’s exact test indicated a statistically significant association between presentation preference and academic performance (p = .004). This provides evidence that the performance distributions differed between the two groups, proving our hypotheses. However, although the charsuggests more favourable performance among students who liked presentations, the test does not establish that liking presentations causes better academic performance.
+Among the 99 students analysed, Fisher’s exact test indicated a statistically significant association between presentation preference and academic performance (p = .004). This provides evidence that the performance distributions differed between the two groups, providing support for our hypotheses. Considering the descriptive data in the graph, this association is likely positive. However, although the chart suggests more favourable performance among students who liked presentations, the test does not establish that liking presentations causes better academic performance.
 
 ### Liking new things
 
